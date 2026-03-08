@@ -3,13 +3,12 @@ on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04  # Using an older, more stable version of Ubuntu
     steps:
       - uses: actions/checkout@v4
 
       - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
+        uses: akshayaurora/buildozer-action@master
         with:
           workdir: .
           buildozer_version: stable
