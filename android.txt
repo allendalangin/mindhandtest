@@ -1,0 +1,3 @@
+title=MindHand Camera
+author=Allen
+orientation=portrait
