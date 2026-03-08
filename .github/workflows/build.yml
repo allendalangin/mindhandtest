@@ -7,12 +7,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          pip3 install --user --upgrade Cython==3.0.10 buildozer
+
       - name: Build with Buildozer
-        # Using the most stable community action for 2026
-        uses: GearUp-Solutions/buildozer-action@v1
-        with:
-          workdir: .
-          buildozer_version: stable
+        run: |
+          export PATH=$PATH:$HOME/.local/bin
+          buildozer android debug
+        env:
+          # This bypasses the "chown" and "root" errors you saw earlier
+          BUILDOZER_ALLOW_ORG_KIVY_BITSHARE: 1
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
