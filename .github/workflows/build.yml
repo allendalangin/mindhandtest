@@ -26,7 +26,8 @@ jobs:
           sudo apt install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev \
           libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev \
           liblzma-dev libsqlite3-dev libbz2-dev
-          pip3 install --user --upgrade Cython==3.0.10 buildozer
+          # We install appdirs and sh here so Buildozer can use them to organize files
+          pip3 install --user --upgrade Cython==3.0.10 buildozer appdirs sh
 
       - name: Build APK with Buildozer
         run: |
