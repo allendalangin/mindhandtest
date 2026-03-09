@@ -7,7 +7,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Sets up Java 17 for modern Android Gradle Plugin
       - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
@@ -18,8 +17,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .buildozer
-          # Using a new cache key to ensure a clean start after the OOM error
-          key: ${{ runner.os }}-buildozer-v2-${{ hashFiles('buildozer.spec') }}
+          # v3 key to ensure we move past the FileNotFoundError
+          key: ${{ runner.os }}-buildozer-v3-${{ hashFiles('buildozer.spec') }}
 
       - name: Install System Dependencies
         run: |
@@ -32,14 +31,16 @@ jobs:
       - name: Build APK with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          # Clean old build artifacts to save memory/disk space
-          buildozer android clean
+          # Safety check: Only clean if the directory exists
+          if [ -d ".buildozer" ]; then
+            buildozer android clean
+          else
+            echo ".buildozer folder not found, skipping clean for first run."
+          fi
           # 'yes |' handles the license agreements automatically
           yes | buildozer android debug
         env:
           BUILDOZER_ALLOW_ORG_KIVY_BITSHARE: 1
-          # --- THE MEMORY FIX ---
-          # Increases heap size and metadata space for the Java process
           GRADLE_OPTS: "-Xmx4096m -XX:MaxMetaspaceSize=1024m"
 
       - name: Upload APK Artifact
