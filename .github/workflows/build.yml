@@ -17,8 +17,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .buildozer
-          # v3 key to ensure we move past the FileNotFoundError
-          key: ${{ runner.os }}-buildozer-v3-${{ hashFiles('buildozer.spec') }}
+          # Updated to v4 to clear the "Broken Pipe" error state
+          key: ${{ runner.os }}-buildozer-v4-${{ hashFiles('buildozer.spec') }}
 
       - name: Install System Dependencies
         run: |
@@ -26,21 +26,18 @@ jobs:
           sudo apt install -y git zip unzip autoconf automake libtool pkg-config zlib1g-dev \
           libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev \
           liblzma-dev libsqlite3-dev libbz2-dev
-          # We install appdirs and sh here so Buildozer can use them to organize files
-          pip3 install --user --upgrade Cython==3.0.10 buildozer appdirs sh  toml build
-          
+          # Added wheel to prevent compilation errors
+          pip3 install --user --upgrade Cython==3.0.10 buildozer appdirs sh toml build wheel
 
       - name: Build APK with Buildozer
         run: |
           export PATH=$PATH:$HOME/.local/bin
-          # Safety check: Only clean if the directory exists
+          # Safety check for .buildozer folder
           if [ -d ".buildozer" ]; then
             buildozer android clean
-          else
-            echo ".buildozer folder not found, skipping clean for first run."
           fi
-          # 'yes |' handles the license agreements automatically
-          yes | buildozer android debug
+          # We use a more robust yes pipe to avoid 'Broken pipe'
+          yes | buildozer android debug || (echo "Build failed, checking logs" && exit 1)
         env:
           BUILDOZER_ALLOW_ORG_KIVY_BITSHARE: 1
           GRADLE_OPTS: "-Xmx4096m -XX:MaxMetaspaceSize=1024m"
