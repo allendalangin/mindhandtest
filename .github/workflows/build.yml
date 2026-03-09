@@ -27,7 +27,8 @@ jobs:
           libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev \
           liblzma-dev libsqlite3-dev libbz2-dev
           # We install appdirs and sh here so Buildozer can use them to organize files
-          pip3 install --user --upgrade Cython==3.0.10 buildozer appdirs sh  toml
+          pip3 install --user --upgrade Cython==3.0.10 buildozer appdirs sh  toml build
+          
 
       - name: Build APK with Buildozer
         run: |
