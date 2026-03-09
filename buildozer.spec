@@ -17,10 +17,12 @@ requirements = python3,kivy==2.3.0,opencv,numpy,sdl2,sdl2_image,sdl2_mixer,sdl2_
 android.permissions = CAMERA, WRITE_EXTERNAL_STORAGE, READ_EXTERNAL_STORAGE
 orientation = portrait
 
-# Stable API 34 matches our Java 17 setup perfectly
-android.api = 34
+# buildozer.spec
+android.api = 33
 android.minapi = 21
-android.build_tools_version = 34.0.0
+# Ensure we use a stable build tools version
+android.build_tools_version = 33.0.0
+
 
 
 
